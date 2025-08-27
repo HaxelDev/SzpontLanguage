@@ -46,7 +46,7 @@ A jak chcesz być wizjonerem, próbuj --target cpp (spoiler: na razie dostaniesz
 
 Projekt inspirowany złotą myślą Igora Grabowskiego oraz frustracją wynikającą z nadmiaru nawiasów w C++ i wcięć w Pythonie.
 
-<img src="https://media.discordapp.net/attachments/1133545182046986321/1410378807742828564/lv_0_20250827233730-ezgif.com-video-to-gif-converter.gif?ex=68b0cd1f&is=68af7b9f&hm=c20b21e5d3df1adcaea79d53d591089513679206229c750ccad4218c54f8b873&=" alt="Szpont">
+<img src="https://s5.ezgif.com/tmp/ezgif-513e757d8ef826.gif" alt="Szpont">
 
 # Licencja
 
