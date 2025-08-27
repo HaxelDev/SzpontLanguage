@@ -46,7 +46,7 @@ A jak chcesz być wizjonerem, próbuj --target cpp (spoiler: na razie dostaniesz
 
 Projekt inspirowany złotą myślą Igora Grabowskiego oraz frustracją wynikającą z nadmiaru nawiasów w C++ i wcięć w Pythonie.
 
-<img src="szpont.gif" alt="Szpont">
+<img src="szpont.gif" alt="Szpont" width="300" height="200">
 
 # Licencja
 
