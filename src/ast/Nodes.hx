@@ -20,6 +20,7 @@ enum Expr {
   EUnaryOp(name:String, op:String, isPrefix:Bool);
   EFor(init:Expr, condition:Expr, increment:Expr, body:Array<Expr>);
   EForEach(varType:String, varName:String, iterable:Expr, body:Array<Expr>);
+  EImport(module:String);
 }
 
 typedef ClassDecl = {
@@ -34,5 +35,6 @@ typedef ObjInstance = {
 
 typedef Program = {
   classes:Array<ClassDecl>,
-  mainClass:ClassDecl
+  mainClass:ClassDecl,
+  imports:Array<Expr>
 }

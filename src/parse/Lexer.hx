@@ -201,6 +201,7 @@ class Lexer {
       case "null": TokenKind.KW_NULL;
       case "def": TokenKind.KW_DEF;
       case "return": TokenKind.KW_RETURN;
+      case "import": TokenKind.KW_IMPORT;
       case "if": TokenKind.KW_IF;
       case "else": TokenKind.KW_ELSE;
       case "while": TokenKind.KW_WHILE;

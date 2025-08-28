@@ -16,6 +16,7 @@ package parse;
   var KW_NULL        = "KW_NULL";
   var KW_DEF         = "KW_DEF";
   var KW_RETURN      = "KW_RETURN";
+  var KW_IMPORT      = "KW_IMPORT";
   var KW_IF          = "KW_IF";
   var KW_ELSE        = "KW_ELSE";
   var KW_WHILE       = "KW_WHILE";

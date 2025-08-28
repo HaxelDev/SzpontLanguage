@@ -12,6 +12,14 @@ typedef Env = {
 class Interpreter {
   public static function run(p: Program): Void {
     var env = createGlobalEnv();
+
+    if (Reflect.hasField(p, "imports")) {
+      var imports:Array<Expr> = Reflect.field(p, "imports");
+      for (imp in imports) {
+        eval(imp, env);
+      }
+    }
+
     for (classDecl in p.classes) {
       env.classes.set(classDecl.name, classDecl);
     }
@@ -262,6 +270,19 @@ class Interpreter {
           }
         }
         Console.log("[Interpreter] Undefined function: " + name);
+        return null;
+      case EImport(module):
+        var filePath = module.split(".").join("/") + ".sz";
+        if (sys.FileSystem.exists(filePath)) {
+          var code = sys.io.File.getContent(filePath);
+          var tokens = new parse.Lexer(code).tokenize();
+          var program = new parse.Parser(tokens).parseProgram(null);
+          for (classDecl in program.classes) {
+            env.classes.set(classDecl.name, classDecl);
+          }
+        } else {
+          Console.log("[Interpreter] File not found: " + filePath);
+        }
         return null;
       case Expr.EIf(condition, thenBody, elseIfs, elseBody):
         var condValue = eval(condition, env);

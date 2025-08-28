@@ -13,12 +13,16 @@ class Parser {
 
   public function parseProgram(mainClassName:Null<String>):Program {
     var classes:Array<ClassDecl> = [];
+    var imports:Array<Expr> = [];
     var mainClass:Null<ClassDecl> = null;
 
     reset();
 
     while (!isAtEnd()) {
-      if (match(TokenKind.KW_CLASS)) {
+      if (match(TokenKind.KW_IMPORT)) {
+        var importExpr = parseImport();
+        imports.push(importExpr);
+      } else if (match(TokenKind.KW_CLASS)) {
         var classDecl = parseClass();
         classes.push(classDecl);
         if (mainClassName != null && classDecl.name == mainClassName) {
@@ -31,11 +35,7 @@ class Parser {
       }
     }
 
-    if (mainClass == null) {
-      error(previous(), "No class with main() function found");
-    }
-
-    return { classes: classes, mainClass: mainClass };
+    return { classes: classes, mainClass: mainClass, imports: imports };
   }
 
   function parseClass():ClassDecl {
@@ -54,6 +54,22 @@ class Parser {
 
     consume(TokenKind.RBRACE, "Expected '}' to close class");
     return { name: name, body: body };
+  }
+
+  function parseImport():Expr {
+    var module = "";
+    while (!check(TokenKind.SEMICOLON)) {
+      if (check(TokenKind.IDENT)) {
+        module += advance().lexeme;
+      } else if (check(TokenKind.DOT)) {
+        module += ".";
+        advance();
+      } else {
+        Console.log("Unexpected token in import path: " + peek().lexeme);
+      }
+    }
+    consume(TokenKind.SEMICOLON, "Expected ';' after import");
+    return Expr.EImport(module);
   }
 
   function hasMainFunction(classDecl:ClassDecl):Bool {
