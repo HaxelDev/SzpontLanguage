@@ -210,8 +210,8 @@ class Python {
     }
 
     static function repeat(s:String, n:Int):String {
-      var buf = new StringBuf();
-      for (i in 0...n) buf.add(s);
-      return buf.toString();
+        var buf = new StringBuf();
+        for (i in 0...n) buf.add(s);
+        return buf.toString();
     }
 }

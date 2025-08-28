@@ -151,5 +151,16 @@ class StdLib {
       ],
       vars: new Map()
     });
+
+    registerClass("String", {
+      name: "String",
+      methods: [
+        "chr" => function(args:Array<Dynamic>):Dynamic {
+          if (args != null && args.length > 0) return String.fromCharCode(Std.int(args[0]));
+          return "";
+        }
+      ],
+      vars: new Map()
+    });
   }
 }
