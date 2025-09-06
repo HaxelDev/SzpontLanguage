@@ -122,42 +122,139 @@ class StdLib {
       vars: new Map()
     });
 
-    registerClass("JSON", {
-      name: "JSON",
-      methods: [
-        "parse" => function(args:Array<Dynamic>):Dynamic {
-          if (args != null && args.length > 0) {
-            var str = Std.string(args[0]);
-            try {
-              return haxe.Json.parse(str);
-            } catch(e:Dynamic) {
-              Console.log("[JSON] Parse error: " + e);
-              return null;
-            }
-          }
-          return null;
-        },
-        "stringify" => function(args:Array<Dynamic>):Dynamic {
-          if (args != null && args.length > 0) {
-            try {
-              return haxe.Json.stringify(args[0]);
-            } catch(e:Dynamic) {
-              Console.log("[JSON] Stringify error: " + e);
-              return null;
-            }
-          }
-          return "";
-        }
-      ],
-      vars: new Map()
-    });
-
     registerClass("String", {
       name: "String",
       methods: [
         "chr" => function(args:Array<Dynamic>):Dynamic {
           if (args != null && args.length > 0) return String.fromCharCode(Std.int(args[0]));
           return "";
+        }
+      ],
+      vars: new Map()
+    });
+
+    registerClass("Json", {
+      name: "Json",
+      methods: [
+        "stringify" => function(args:Array<Dynamic>):Dynamic {
+          if (args != null && args.length > 0) {
+            return haxe.Json.stringify(args[0]);
+          }
+          return "";
+        },
+        "parse" => function(args:Array<Dynamic>):Dynamic {
+          if (args != null && args.length > 0) {
+            return haxe.Json.parse(Std.string(args[0]));
+          }
+          return null;
+        },
+        "get" => function(args:Array<Dynamic>):Dynamic {
+          if (args != null && args.length > 1) {
+            var json:Dynamic = haxe.Json.parse(Std.string(args[0]));
+            var key:String = Std.string(args[1]);
+            return Reflect.field(json, key);
+          }
+          return null;
+        }
+      ],
+      vars: new Map()
+    });
+
+    registerClass("Http", {
+      name: "Http",
+      methods: [
+        "getSync" => function(args:Array<Dynamic>):Dynamic {
+          if (args == null || args.length == 0) return null;
+          var url:String = Std.string(args[0]);
+          try {
+            return sys.Http.requestUrl(url);
+          } catch(e:Dynamic) {
+            Console.log("[Http] getSync unavailable on this platform: " + e);
+            return null;
+          }
+        },
+        "get" => function(args:Array<Dynamic>):Dynamic {
+          if (args == null || args.length == 0) return null;
+          var url:String = Std.string(args[0]);
+          try {
+            var req = new haxe.Http(url);
+            var result:Null<String> = null;
+            req.onData = function(data:String):Void {
+              result = data;
+            }
+            req.onError = function(err:String):Void {
+              Console.log("[Http.get] Error: " + err);
+              result = null;
+            }
+            req.request(false);
+            return result;
+          } catch(e:Dynamic) {
+            Console.log("[Http.get] Exception: " + e);
+            return null;
+          }
+        },
+        "post" => function(args:Array<Dynamic>):Dynamic {
+          if (args == null || args.length < 2) return null;
+          var url:String = Std.string(args[0]);
+          var body:String = Std.string(args[1]);
+          try {
+            var req = new haxe.Http(url);
+            try {
+              req.setPostData(body);
+              req.request(true);
+            } catch(postErr:Dynamic) {
+              try {
+                var out = new haxe.io.BytesOutput();
+                req.customRequest(true, out, body);
+                return out.getBytes().toString();
+              } catch(e2:Dynamic) {
+                Console.log("[Http.post] Post failed: " + e2);
+                return null;
+              }
+            }
+            return null;
+          } catch(e:Dynamic) {
+            Console.log("[Http.post] Exception: " + e);
+            return null;
+          }
+        },
+        "request" => function(args:Array<Dynamic>):Dynamic {
+          if (args == null || args.length == 0) return null;
+          var url:String = Std.string(args[0]);
+          var method:String = if (args.length > 1) Std.string(args[1]) else "GET";
+          var body:String = if (args.length > 2) Std.string(args[2]) else "";
+          try {
+            var req = new haxe.Http(url);
+            var result:Null<String> = null;
+            req.onData = function(data:String):Void {
+              result = data;
+            }
+            req.onError = function(err:String):Void {
+              Console.log("[Http.request] Error: " + err);
+              result = null;
+            }
+            if (method == "POST" && body != "") {
+              try {
+                req.setPostData(body);
+                req.request(true);
+              } catch(e:Dynamic) {
+                try {
+                  var out = new haxe.io.BytesOutput();
+                  req.customRequest(false, out, body);
+                  return out.getBytes().toString();
+                } catch(e2:Dynamic) {
+                  Console.log("[Http.request] customRequest failed: " + e2);
+                  return null;
+                }
+              }
+            } else {
+              req.request(false);
+            }
+            return result;
+          } catch(e:Dynamic) {
+            Console.log("[Http.request] Exception: " + e);
+            return null;
+          }
         }
       ],
       vars: new Map()

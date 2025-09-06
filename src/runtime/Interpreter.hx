@@ -321,7 +321,7 @@ class Interpreter {
           result = evalBlock(body, env);
         }
         return result;
-      case Expr.EFor(init, condition, increment, body):
+      case EFor(init, condition, increment, body):
         var result:Dynamic = null;
         if (init != null) eval(init, env);
         while (true) {
@@ -337,7 +337,7 @@ class Interpreter {
           if (increment != null) eval(increment, env);
         }
         return result;
-      case Expr.EForEach(varType, varName, iterableExpr, body):
+      case EForEach(varType, varName, iterableExpr, body):
         var iterable = eval(iterableExpr, env);
         if (iterable == null) return null;
         if (Std.isOfType(iterable, Array)) {
